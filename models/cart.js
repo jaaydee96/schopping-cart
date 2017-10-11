@@ -21,4 +21,8 @@ module.exports = function Cart(OldCart) {
         }
         return arr;
     };
+
+    this.priceRounded = function(price) {
+        return Math.round(price * 100) / 100;
+    };
 };

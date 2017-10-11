@@ -32,4 +32,12 @@ router.get('/add-to-cart/:id', function (req, res, next) {
     });
 });
 
+router.get('/shopping-cart', function (req, res, next) {
+    if(!req.session.cart) {
+        res.render('shop/shopping-cart', {products: null});
+    }
+    var cart = new Cart(req.session.cart);
+    res.render('shop/shopping-cart', {products: cart.generateArray(), totalPrice: cart.priceRounded(cart.totalPrice)});
+});
+
 module.exports = router;
