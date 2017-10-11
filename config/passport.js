@@ -1,7 +1,7 @@
 var passport = require('passport');
 var localStrategy =  require('passport-local').Strategy;
 
-//require user model
+//require User model
 var User = require('../models/user');
 
 // used to serialize the user for the session
