@@ -18,7 +18,7 @@ var userRoutes  = require('./routes/user');
 
 var app = express();
 
-mongoose.connect('mongodb://linbox.kovopb.cz:27017/schopping', { useMongoClient: true, promiseLibrary: global.Promise });
+mongoose.connect('mongodb://linbox.kovopb.cz:27017/shopping', { useMongoClient: true, promiseLibrary: global.Promise });
 require('./config/passport');
 
 // view engine setup

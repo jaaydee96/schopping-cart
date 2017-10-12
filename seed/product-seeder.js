@@ -1,6 +1,6 @@
 var Product = require('../models/product');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://linbox.kovopb.cz:27017/schopping', { useMongoClient: true, promiseLibrary: global.Promise });
+mongoose.connect('mongodb://linbox.kovopb.cz:27017/shopping', { useMongoClient: true, promiseLibrary: global.Promise });
 var products = [
     new Product({
         imagePath: 'https://upload.wikimedia.org/wikipedia/en/5/5e/Gothiccover.png',

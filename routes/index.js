@@ -1,11 +1,12 @@
 var express = require('express');
 var router = express.Router();
-//require Product model
-var Product = require('../models/product');
-//require Cart model
-var Cart = require('../models/cart');
 
-/* Home Page */
+/* Models */
+var Product = require('../models/product');
+var Cart = require('../models/cart');
+var Order = require('../models/order');
+
+/* Routes */
 router.get('/', function(req, res, next) {
     var successMsg = req.flash('success')[0];
     Product.find(function (err, docs) {
@@ -42,10 +43,7 @@ router.get('/shopping-cart', function (req, res, next) {
 });
 
 /*
-    Test credit card
-    Num:4242 4242 4242 4242
-    Exp:10/2017
-    CVC:232
+    Test credit card number 4242 4242 4242 4242
 */
 router.get('/checkout', isLoggedIn, function(req, res, next) {
     if (!req.session.cart) {
@@ -76,10 +74,7 @@ router.post('/checkout', isLoggedIn, function(req, res, next) {
             req.flash('error', err.message);
             return res.redirect('/checkout');
         }
-        req.flash('success', 'Successfully bought product!');
-        req.session.cart = null;
-        res.redirect('/');
-        /*
+
         var order = new Order({
             user: req.user,
             cart: cart,
@@ -92,7 +87,6 @@ router.post('/checkout', isLoggedIn, function(req, res, next) {
             req.session.cart = null;
             res.redirect('/');
         });
-        */
     });
 });
 
