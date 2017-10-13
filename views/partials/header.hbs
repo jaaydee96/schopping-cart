@@ -13,7 +13,7 @@
                 <li>
                     <a href="/shopping-cart">
                         <i class="fa fa-shopping-cart" aria-hidden="true"></i> Schopping Cart
-                        <span class="badge">{{ session.cart.totalQty }}</span>
+                        <span class="badge">{{# if session.cart.totalQty }} {{ session.cart.totalQty }} {{/if}}</span>
                     </a>
                 </li>
                 <li class="dropdown">
