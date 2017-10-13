@@ -12,6 +12,7 @@ var MongoStore = require('connect-mongo')(session);
 var passport = require('passport');
 var flash = require('connect-flash');
 var validator = require('express-validator');
+var moment = require('moment');
 
 var indexRoutes = require('./routes/index');
 var userRoutes  = require('./routes/user');
@@ -27,7 +28,12 @@ app.engine('.hbs', expressHbs({
     defaultLayout: 'layout',
     extname: '.hbs',
     layoutsDir: path.join(__dirname, 'views/layouts'),
-    partialsDir: path.join(__dirname, 'views/partials')
+    partialsDir: path.join(__dirname, 'views/partials'),
+    helpers: {
+        formatDate: function (date) {
+            return moment(date).locale('en').format('LL');
+        }
+    }
 }));
 
 app.set('view engine', '.hbs');
@@ -56,6 +62,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function (req, res, next) {
     res.locals.login = req.isAuthenticated();
     res.locals.session = req.session;
+    res.locals.user = req.user;
+
     next();
 });
 

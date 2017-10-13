@@ -1,6 +1,14 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <h1>User Profile</h1>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <p>Email: {{user.email}}</p>
+            </div>
+            <div class="panel-footer clearfix">
+                <span class="pull-left">Created at: {{formatDate user.created_at}}</span><span class="pull-right">Updated at: {{formatDate user.updated_at}}</span>
+            </div>
+        </div>
         <hr>
         <h2>My Orders</h2>
         {{# each orders }}
