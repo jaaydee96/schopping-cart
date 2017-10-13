@@ -1,2 +1,2 @@
-# schopping-cart
-NODE.js / Express /Mongo DB - Build a Schopping Cart
+# shopping-cart
+NODE.js / Express / Mongo DB - Build a Shopping Cart
