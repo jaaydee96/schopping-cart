@@ -31,7 +31,7 @@ app.engine('.hbs', expressHbs({
     partialsDir: path.join(__dirname, 'views/partials'),
     helpers: {
         formatDate: function (date) {
-            return moment(date).locale('en').format('LL');
+            return moment(date).locale('en').format('LLL');
         }
     }
 }));

@@ -1,4 +1,4 @@
-Stripe.setPublishableKey('pk_test_trLxhHCPeF16QsQ8xYBV66Xr');
+Stripe.setPublishableKey('pk_test_trLxhHCPeF16QsQ8xYBV66Xr'); //Stripe Publishable API key
 
 var $form = $('#checkout-form');
 

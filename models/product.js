@@ -1,13 +1,34 @@
+/*
+   Product model
+ */
 var mongoose = require('mongoose');
-//DeprecationWarning: Mongoose: mpromise
-mongoose.Promise = global.Promise;
-
+mongoose.Promise = global.Promise; //DeprecationWarning: Mongoose: mpromise
 var Schema = mongoose.Schema;
-var schema = new Schema({
+
+var productSchema = new Schema({
    imagePath: {type: String, required: true},
    title: {type: String, required: true},
    description: {type: String, required: true},
    price: {type: Number, required: true},
+   created_at: { type: Date, default: new Date},
+   updated_at: { type: Date, default: null}
 });
 
-module.exports = mongoose.model('Product', schema);
+// on every save, add the date
+productSchema.pre('save', function(next) {
+    // get the current date
+    var currentDate = new Date();
+
+    // if created_at doesn't exist, add to that field
+    if (!this.created_at) {
+        this.created_at = currentDate;
+    }
+    else {
+        // change the updated_at field to current date
+        this.updated_at = currentDate;
+    }
+
+    next();
+});
+
+module.exports = mongoose.model('Product', productSchema);

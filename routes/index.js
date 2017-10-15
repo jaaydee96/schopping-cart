@@ -6,7 +6,11 @@ var Product = require('../models/product');
 var Cart = require('../models/cart');
 var Order = require('../models/order');
 
-/* Routes */
+/* Routes/Controllers */
+
+/*
+    Products list
+ */
 router.get('/', function(req, res, next) {
     var successMsg = req.flash('success')[0];
     Product.find(function (err, docs) {
@@ -20,6 +24,9 @@ router.get('/', function(req, res, next) {
   });
 });
 
+/*
+    Add item to shopping cart
+ */
 router.get('/add-to-cart/:id', function (req, res, next) {
     var productId = req.params.id;
     var cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -33,6 +40,9 @@ router.get('/add-to-cart/:id', function (req, res, next) {
     });
 });
 
+/*
+    Reduce item by one in shopping cart
+ */
 router.get('/reduce/:id', function(req, res, next) {
     var productId = req.params.id;
     var cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -42,6 +52,9 @@ router.get('/reduce/:id', function(req, res, next) {
     res.redirect('/shopping-cart');
 });
 
+/*
+    Remove all units of the same item in shopping cart
+ */
 router.get('/remove/:id', function(req, res, next) {
     var productId = req.params.id;
     var cart = new Cart(req.session.cart ? req.session.cart : {});
@@ -51,26 +64,38 @@ router.get('/remove/:id', function(req, res, next) {
     res.redirect('/shopping-cart');
 });
 
+/*
+    Shopping cart list
+ */
 router.get('/shopping-cart', function (req, res, next) {
     if(!req.session.cart) {
         return res.render('shop/shopping-cart', {products: null});
     }
     var cart = new Cart(req.session.cart);
-    res.render('shop/shopping-cart', {products: cart.generateArray(), totalPrice: cart.priceRounded(cart.totalPrice)});
+
+    res.render('shop/shopping-cart', {products: cart.generateArray(), totalPrice: cart.getTotalPrice()});
 });
 
 /*
-    Use credit card number 4242 4242 4242 4242 for testing
-*/
+    Checkout form for Stripe service on stripe.com
+    protection for authenticated user only
+    credit card validation process on client side in checkout.js
+    tip: use credit card number 4242 4242 4242 4242 for testing
+ */
 router.get('/checkout', isLoggedIn, function(req, res, next) {
     if (!req.session.cart) {
         return res.redirect('/shopping-cart');
     }
     var cart = new Cart(req.session.cart);
     var errMsg = req.flash('error')[0];
-    res.render('shop/checkout', {total: cart.priceRounded(cart.totalPrice), errMsg: errMsg, noError: !errMsg});
+
+    res.render('shop/checkout', {total: cart.getTotalPrice(), errMsg: errMsg, noError: !errMsg});
 });
 
+/*
+    Credit card charge process with Stripe service on stripe.com
+    protection for authenticated user only
+ */
 router.post('/checkout', isLoggedIn, function(req, res, next) {
     if (!req.session.cart) {
         return res.redirect('/shopping-cart');
@@ -78,11 +103,11 @@ router.post('/checkout', isLoggedIn, function(req, res, next) {
     var cart = new Cart(req.session.cart);
 
     var stripe = require("stripe")(
-        "sk_test_SZnMAgQevmwGEcpvtCwS1BfT"
+        "sk_test_SZnMAgQevmwGEcpvtCwS1BfT" // Stripe API secret key
     );
 
     stripe.charges.create({
-        amount: cart.priceRounded(cart.totalPrice * 100),
+        amount: Math.round(cart.getTotalPrice() * 100),
         currency: "eur",
         source: req.body.stripeToken, // obtained with Stripe.js
         description: "Test Charge"
@@ -108,7 +133,10 @@ router.post('/checkout', isLoggedIn, function(req, res, next) {
 });
 
 module.exports = router;
-
+//======================================================================================================================
+/*
+    Check authenticated user and remember where did he come from
+ */
 function isLoggedIn(req, res, next) {
     if (req.isAuthenticated()) {
         return next();

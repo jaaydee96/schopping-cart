@@ -6,7 +6,7 @@
                 <p>Email: {{user.email}}</p>
             </div>
             <div class="panel-footer clearfix">
-                <span class="pull-left">Created at: {{formatDate user.created_at}}</span><span class="pull-right">Updated at: {{formatDate user.updated_at}}</span>
+                <span class="pull-left">Created at: {{formatDate user.created_at}}</span>{{# if isUpdateAt }}<span class="pull-right">Updated at: {{formatDate user.updated_at}}</span>{{/if}}
             </div>
         </div>
         <hr>
@@ -17,14 +17,18 @@
                     <ul class="list-group">
                         {{# each this.items }}
                             <li class="list-group-item">
-                                <span class="badge">{{ this.price }}</span>
-                                {{ this.item.title }} | {{ this.qty }} Units
+                                {{ this.qty }} x {{ this.item.title }}
+                                <span class="badge">€{{ this.price }}</span>
+
                             </li>
                         {{/each}}
                     </ul>
                 </div>
                 <div class="panel-footer">
                     <strong>Total Price: €{{ this.totalPrice }}</strong>
+                </div>
+                <div class="panel-footer clearfix">
+                    <span class="pull-left">Created at: {{formatDate this.created_at}}</span>{{#if this.isUpdateAt }}<span class="pull-right">Updated at: {{formatDate this.updated_at}}</span>{{/if}}
                 </div>
             </div>
         {{/each}}
