@@ -1,9 +1,26 @@
 <div class="row">
     <div class="col-md-8 col-md-offset-2">
         <h1>User Profile</h1>
+        <div id="success" class="alert alert-success" {{#if noMessages}}hidden{{/if}}>
+            {{ successMsg }}
+        </div>
+        {{#if hasErrors }}
+            <div class="alert alert-danger">
+                {{# each messages }}
+                    <p>{{this}}</p>
+                {{/each}}
+            </div>
+        {{/if}}
         <div class="panel panel-default">
             <div class="panel-body">
-                <p>Email: {{user.email}}</p>
+                <form action="/user/profile" method="post">
+                    <div class="form-group">
+                        <label for="email">E-Mail</label>
+                        <input type="text" id="email" name="email" class="form-control" value="{{user.email}}">
+                    </div>
+                    <input type="hidden" name="_csrf" value="{{ csrfToken }}">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </form>
             </div>
             <div class="panel-footer clearfix">
                 <span class="pull-left">Created at: {{formatDate user.created_at}}</span>{{# if isUpdateAt }}<span class="pull-right">Updated at: {{formatDate user.updated_at}}</span>{{/if}}

@@ -17,6 +17,9 @@ router.use(csrfProtection);
     protection for authenticated user only
  */
 router.get('/profile', isLoggedIn, function (req, res, next) {
+    var successMsg = req.flash('success')[0];
+    var messages = req.flash('error');
+
     //fetch orders
     Order.find({user: req.user}, function(err, orders) {
         if (err) {
@@ -28,10 +31,64 @@ router.get('/profile', isLoggedIn, function (req, res, next) {
             cart = new Cart(order.cart);
             order.items = cart.generateArray();
             order.totalPrice = cart.getTotalPrice();
-            order.isUpdateAt = req.user.updated_at==null ? false : true;
+            order.isUpdateAt = order.updated_at==null ? false : true;
         });
 
-        res.render('user/profile', { orders: orders, isUpdateAt: req.user.updated_at==null ? false : true });
+        res.render('user/profile', {
+            csrfToken: req.csrfToken(),
+            isUpdateAt: req.user.updated_at==null ? false : true,
+            orders: orders,
+            messages: messages, hasErrors: messages.length > 0,
+            successMsg: successMsg, noMessages: !successMsg
+        });
+
+    });
+});
+
+router.post('/profile', isLoggedIn, function (req, res, next) {
+    var messages = [];
+    var email = req.body.email;
+    var User = require('../models/user');
+
+    User.findOne({'email': email}, function (err, user) {
+        if (err) throw err;
+        //form validator
+        req.checkBody('email', 'Invalid email').notEmpty().isEmail();
+        //form validation errors
+        var errors = req.validationErrors();
+        if (errors) {
+            //building error messages for flash
+            errors.forEach(function (error) {
+                messages.push(error.msg);
+            });
+        }
+
+        if (user) {
+            messages.push('Email is already in use.');
+        }
+
+        //any errors redirect to back user profile
+        if (messages.length > 0) {
+            //register flash messages
+            req.flash('error', messages);
+
+            return res.redirect('/user/profile');
+        }
+
+        //updating user
+        User.findOne({'email': req.user.email}, function (err, user) {
+            if (err) throw err;
+            user.email = email;
+            user.save(function (err, user) {
+                if (err) throw err;
+                if (user) {
+                    req.flash('success', 'Email has been successfully updated.');
+                }
+
+                return res.redirect('/user/profile');
+            });
+        });
+
     });
 });
 

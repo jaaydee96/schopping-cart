@@ -10,8 +10,8 @@ var productSchema = new Schema({
    title: {type: String, required: true},
    description: {type: String, required: true},
    price: {type: Number, required: true},
-   created_at: { type: Date, default: new Date},
-   updated_at: { type: Date, default: null}
+   created_at: { type: Date},
+   updated_at: { type: Date}
 });
 
 // on every save, add the date
@@ -22,6 +22,7 @@ productSchema.pre('save', function(next) {
     // if created_at doesn't exist, add to that field
     if (!this.created_at) {
         this.created_at = currentDate;
+        this.updated_at = null;
     }
     else {
         // change the updated_at field to current date
